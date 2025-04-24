@@ -42,5 +42,5 @@ public class Itens {
     private ItensRarityType rarity;
 
     @Positive(message = "deve ser positivo")
-    private double preco;
+    private int price;
 }

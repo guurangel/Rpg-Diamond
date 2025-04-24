@@ -1,9 +1,12 @@
 package com.example.rpgdiamond.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rpgdiamond.model.Character;
+import com.example.rpgdiamond.model.CharacterType;
 import com.example.rpgdiamond.repository.CharacterRepository;
+import com.example.rpgdiamond.specification.CharacterSpecification;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,13 +35,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CharacterController {
 
+    public record CharacterFilters(String name, CharacterType type) {
+    }
+
     @Autowired
     private CharacterRepository repository;
 
     @GetMapping
-    @Cacheable("characters")
-    public List<Character> index() {
-        return repository.findAll();
+    public Page<Character> index(
+            CharacterFilters filters,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+                var specification = CharacterSpecification.withFilters(filters);
+                return repository.findAll(specification, pageable);
     }
 
     @PostMapping

@@ -4,6 +4,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,8 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.example.rpgdiamond.controller.CharacterController.CharacterFilters;
+import com.example.rpgdiamond.model.CharacterType;
 import com.example.rpgdiamond.model.Itens;
+import com.example.rpgdiamond.model.ItensRarityType;
+import com.example.rpgdiamond.model.ItensType;
 import com.example.rpgdiamond.repository.ItensRepository;
+import com.example.rpgdiamond.specification.CharacterSpecification;
+import com.example.rpgdiamond.specification.ItensSpecification;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -28,13 +39,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ItensController {
 
+    public record ItensFilters(String name, ItensRarityType rarity, ItensType type) {
+    }
+
     @Autowired
     private ItensRepository repository;
 
     @GetMapping
-    @Cacheable("itens")
-    public List<Itens> index() {
-        return repository.findAll();
+    public Page<Itens> index(
+            ItensFilters filters,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+                var specification = ItensSpecification.withFilters(filters);
+                return repository.findAll(specification, pageable);
     }
 
     @PostMapping
