@@ -11,23 +11,23 @@ import com.example.rpgdiamond.model.Itens;
 import com.example.rpgdiamond.model.ItensType;
 import com.example.rpgdiamond.model.ItensRarityType;
 
-public interface ItensRepository extends JpaRepository<Itens, Long>, JpaSpecificationExecutor<Itens> {
+public interface ItensRepository extends 
+    JpaRepository<Itens, Long>, 
+    JpaSpecificationExecutor<Itens> {
 
     Page<Itens> findByName(String name, Pageable pageable);
     
     Page<Itens> findByType(ItensType type, Pageable pageable);
     
-    // @Query("SELECT i FROM Itens i WHERE i.price BETWEEN :minPrice AND :maxPrice")
-    // Page<Itens> findByPriceRange(@Param("minPrice") Double minPrice, 
-    //                            @Param("maxPrice") Double maxPrice, 
-    //                            Pageable pageable);
-    
     Page<Itens> findByRarity(ItensRarityType rarity, Pageable pageable);
     
-    // Combinação de filtros (opcional)
-    Page<Itens> findByNameAndTypeAndRarity(
+    Page<Itens> findByPriceBetween(Integer minPrice, Integer maxPrice, Pageable pageable);
+    
+    Page<Itens> findByNameAndTypeAndRarityAndPriceBetween(
         String name,
         ItensType type,
         ItensRarityType rarity,
+        Integer minPrice,
+        Integer maxPrice,
         Pageable pageable);
 }

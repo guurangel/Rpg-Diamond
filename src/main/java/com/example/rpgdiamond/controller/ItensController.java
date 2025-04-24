@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ItensController {
 
-    public record ItensFilters(String name, ItensRarityType rarity, ItensType type) {
+    public record ItensFilters(String name, ItensRarityType rarity, ItensType type, Integer minPrice, Integer maxPrice ) {
     }
 
     @Autowired

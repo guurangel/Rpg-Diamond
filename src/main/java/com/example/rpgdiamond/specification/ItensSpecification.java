@@ -39,7 +39,26 @@ public class ItensSpecification {
                     )
                 );
             }
+            
+            if (filters.minPrice() != null) {
+                predicates.add(
+                    cb.greaterThanOrEqualTo(
+                        root.get("price"),
+                        filters.minPrice()
+                    )
+                );
+            }
 
+            if (filters.maxPrice() != null) {
+                predicates.add(
+                    cb.lessThanOrEqualTo(
+                        root.get("price"),
+                        filters.maxPrice()
+                    )
+                );
+            }
+
+    
             var arrayPredicates = predicates.toArray(new Predicate[0]);
             return cb.and(arrayPredicates);
         };
